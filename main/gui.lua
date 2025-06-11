@@ -46,7 +46,7 @@ local function findServer()
 		if success and result and result.data then
 			for _, server in ipairs(result.data) do
 				for _, version in ipairs(allowedVersions) do
-					if string.find(server.id, version) and server.playing < server.maxPlayers then
+					if string.find(server.id, version) then
 						return server.id
 					end
 				end
@@ -70,7 +70,7 @@ btn.MouseButton1Click:Connect(function()
 	btn.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
 
 	while true do
-		status.Text = "Searching for versions 1332–1336...🦝"
+		status.Text = "Searching for versions 1332–1336..."
 		local jobId = findServer()
 
 		if jobId then
@@ -80,13 +80,13 @@ btn.MouseButton1Click:Connect(function()
 				TeleportService:TeleportToPlaceInstance(placeId, jobId, player)
 			end)
 			if not success then
-				status.Text = "⚠️ awww teleport failed. Retrying..."
+				status.Text = "⚠️ Teleport failed. Retrying..."
 				wait(3)
 			else
 				break
 			end
 		else
-			status.Text = "❌ Bruh no servers with versions 1332–1336. Retrying..."
+			status.Text = "❌ No matching servers. Retrying..."
 			wait(5)
 		end
 	end
