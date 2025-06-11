@@ -3,7 +3,7 @@ local TeleportService = game:GetService("TeleportService")
 local Players = game:GetService("Players")
 
 local placeId = game.PlaceId
-local targetVersion = "1336"
+local allowedVersions = { "1332", "1333", "1334", "1335", "1336" }
 
 -- GUI setup
 local player = Players.LocalPlayer
@@ -20,7 +20,7 @@ local btn = Instance.new("TextButton", frame)
 btn.Size = UDim2.new(1, -20, 0, 40)
 btn.Position = UDim2.new(0, 10, 0, 10)
 btn.BackgroundColor3 = Color3.fromRGB(85, 170, 255)
-btn.Text = "Find Version " .. targetVersion
+btn.Text = "Find Version 1332–1336"
 btn.TextColor3 = Color3.new(1, 1, 1)
 btn.Font = Enum.Font.GothamBold
 btn.TextSize = 16
@@ -45,8 +45,10 @@ local function findServer()
 
 		if success and result and result.data then
 			for _, server in ipairs(result.data) do
-				if string.find(server.id, targetVersion) and server.playing < server.maxPlayers then
-					return server.id
+				for _, version in ipairs(allowedVersions) do
+					if string.find(server.id, version) and server.playing < server.maxPlayers then
+						return server.id
+					end
 				end
 			end
 			if result.nextPageCursor then
@@ -68,7 +70,7 @@ btn.MouseButton1Click:Connect(function()
 	btn.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
 
 	while true do
-		status.Text = "Searching for version " .. targetVersion .. "..."
+		status.Text = "Searching for versions 1332–1336..."
 		local jobId = findServer()
 
 		if jobId then
@@ -84,7 +86,7 @@ btn.MouseButton1Click:Connect(function()
 				break
 			end
 		else
-			status.Text = "❌ Version " .. targetVersion .. " not found. Retrying..."
+			status.Text = "❌ No servers with versions 1332–1336. Retrying..."
 			wait(5)
 		end
 	end
