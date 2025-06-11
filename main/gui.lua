@@ -70,7 +70,7 @@ btn.MouseButton1Click:Connect(function()
 	btn.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
 
 	while true do
-		status.Text = "Searching for versions 1332–1336..."
+		status.Text = "Searching for versions 1332–1336...🦝"
 		local jobId = findServer()
 
 		if jobId then
@@ -80,13 +80,13 @@ btn.MouseButton1Click:Connect(function()
 				TeleportService:TeleportToPlaceInstance(placeId, jobId, player)
 			end)
 			if not success then
-				status.Text = "⚠️ Teleport failed. Retrying..."
+				status.Text = "⚠️ awww teleport failed. Retrying..."
 				wait(3)
 			else
 				break
 			end
 		else
-			status.Text = "❌ No servers with versions 1332–1336. Retrying..."
+			status.Text = "❌ Bruh no servers with versions 1332–1336. Retrying..."
 			wait(5)
 		end
 	end
