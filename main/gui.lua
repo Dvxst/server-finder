@@ -34,9 +34,8 @@ status.TextColor3 = Color3.new(1, 1, 1)
 status.Font = Enum.Font.Gotham
 status.TextSize = 14
 
--- Finder function
+-- Search and retry logic
 local function findServer()
-	status.Text = "Searching..."
 	local cursor = ""
 	while true do
 		local url = string.format("https://games.roblox.com/v1/games/%s/servers/Public?limit=100&cursor=%s", placeId, cursor)
@@ -46,8 +45,7 @@ local function findServer()
 
 		if success and result and result.data then
 			for _, server in ipairs(result.data) do
-				-- Check if JobId ends with target version (custom logic)
-				if tostring(server.id):sub(-4) == targetVersion then
+				if string.find(server.id, targetVersion) and server.playing < server.maxPlayers then
 					return server.id
 				end
 			end
@@ -57,12 +55,11 @@ local function findServer()
 				break
 			end
 		else
-			status.Text = "Error fetching servers."
+			status.Text = "⚠️ Failed to fetch servers."
 			return nil
 		end
-		wait(0.3)
+		wait(0.5)
 	end
-	status.Text = "Not found."
 	return nil
 end
 
@@ -70,14 +67,25 @@ btn.MouseButton1Click:Connect(function()
 	btn.Text = "Searching..."
 	btn.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
 
-	local jobId = findServer()
-	if jobId then
-		status.Text = "Found! Teleporting..."
-		btn.Text = "Joining..."
-		TeleportService:TeleportToPlaceInstance(placeId, jobId, player)
-	else
-		status.Text = "❌ Version " .. targetVersion .. " not found"
-		btn.Text = "Try Again"
-		btn.BackgroundColor3 = Color3.fromRGB(180, 70, 70)
+	while true do
+		status.Text = "Searching for version " .. targetVersion .. "..."
+		local jobId = findServer()
+
+		if jobId then
+			status.Text = "✅ Found! Teleporting..."
+			btn.Text = "Joining..."
+			local success, err = pcall(function()
+				TeleportService:TeleportToPlaceInstance(placeId, jobId, player)
+			end)
+			if not success then
+				status.Text = "⚠️ Teleport failed. Retrying..."
+				wait(3)
+			else
+				break
+			end
+		else
+			status.Text = "❌ Version " .. targetVersion .. " not found. Retrying..."
+			wait(5)
+		end
 	end
 end)
