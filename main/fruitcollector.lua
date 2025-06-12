@@ -1,4 +1,3 @@
-
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -7,36 +6,11 @@ local fruitChooser = player:WaitForChild("PlayerGui"):WaitForChild("MainGUI"):Wa
 local collectEvent = ReplicatedStorage:WaitForChild("CollectFruit", 10)
 
 local fruitList = {
-    "Carrot",
-    "Strawberry",
-    "Blueberry",
-    "Orange Tulip",
-    "Tomato",
-    "Corn",
-    "Daffodil",
-    "Watermelon",
-    "Pumpkin",
-    "Apple",
-    "Bamboo",
-    "Coconut",
-    "Cactus",
-    "Dragon Fruit",
-    "Mango",
-    "Grape",
-    "Soul Fruit",
-    "Cursed Fruit",
-    "Mushroom",
-    "Pineapple",
-    "Peach",
-    "Raspberry",
-    "Pear",
-    "Papaya",
-    "Banana",
-    "Passionfruit",
-    "Moon Melon",
-    "Moon Mango",
-    "Candy Blossom",
-    "Red Lollipop"
+    "Carrot", "Strawberry", "Blueberry", "Orange Tulip", "Tomato", "Corn", "Daffodil",
+    "Watermelon", "Pumpkin", "Apple", "Bamboo", "Coconut", "Cactus", "Dragon Fruit",
+    "Mango", "Grape", "Soul Fruit", "Cursed Fruit", "Mushroom", "Pineapple", "Peach",
+    "Raspberry", "Pear", "Papaya", "Banana", "Passionfruit", "Moon Melon", "Moon Mango",
+    "Candy Blossom", "Red Lollipop"
 }
 
 local gui = Instance.new("ScreenGui", player.PlayerGui)
@@ -119,10 +93,12 @@ end)
 task.spawn(function()
     while true do
         if running then
-            local selected = fruitChooser:FindFirstChild("SelectedFruit")
-            if selected and selectedFruits[selected.Value] and collectEvent then
-                collectEvent:FireServer(selected.Value)
-                status.Text = "Collected: " .. selected.Value
+            local selectedValueObj = fruitChooser:FindFirstChild("SelectedFruit")
+            local selectedFruit = selectedValueObj and selectedValueObj:IsA("StringValue") and selectedValueObj.Value or nil
+
+            if selectedFruit and selectedFruits[selectedFruit] and collectEvent then
+                collectEvent:FireServer(selectedFruit)
+                status.Text = "Collected: " .. selectedFruit
             end
         end
         task.wait(1)
